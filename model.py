@@ -42,17 +42,17 @@ def focal_loss(y_true, y_pred):
 
 def build_model(bert_dir: str, learning_rate: float, relation_size: int) -> Tuple[Models, Models, Models, Models, Models]:
 
-    def gather_span(x): # 寻找实体跨度的函数 -hc
+    def gather_span(x):
         seq, idxs = x
-        idxs = K.cast(idxs, 'int32')    # K.cast()，作用是张量数据类型的转换，此处把输入的数据类型转化为 int32 -hc
-        if len(K.int_shape(idxs)) == 3: # 检测张量的长度是否为3，如(2，3，4)，其length就是3 -hc
+        idxs = K.cast(idxs, 'int32')    
+        if len(K.int_shape(idxs)) == 3: 
             res = []
-            for i in range(len(K.int_shape(idxs))):     # 从i=1到i=3遍历 -hc
+            for i in range(len(K.int_shape(idxs))):     
                 batch_idxs = K.arange(0, K.shape(seq)[0])
-                batch_idxs = K.expand_dims(batch_idxs, 1)   # 在维度1上为batch_idxs增加一维 -hc
-                indices = K.concatenate([batch_idxs, idxs[:, i, :]], 1) # 将batch_idxs和idxs[:,i,:]按照维度1拼接 -hc
+                batch_idxs = K.expand_dims(batch_idxs, 1)   
+                indices = K.concatenate([batch_idxs, idxs[:, i, :]], 1)
                 res.append(K.expand_dims(tf.gather_nd(seq, indices), 1))
-                # tf.gather_nd()作用是根据indices的值从seq（一个tensor）中选取相应的部分，组成一个新的tensor
+                
             return K.concatenate(res, 1)
         batch_idxs = K.arange(0, K.shape(seq)[0])
         batch_idxs = K.expand_dims(batch_idxs, 1)
