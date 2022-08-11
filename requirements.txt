@@ -4,3 +4,4 @@ Keras==2.3.1
 tqdm
 click
 langml
+tensorflow==1.15.0
